@@ -83,7 +83,7 @@ public class FileLoad {
 			if (is(tmp, "*.sat", "*.vda"))acis.add(tmp);
 			if (is(tmp, "*.wrl", "*.stl"))vrml.add(tmp);
 			if (is(tmp, "*.cgr", "*.catpart", "*.catproduct")) catia.add(tmp);
-			if (is(tmp, "*.prt.*", "*.xpr", "*.asm.*", ".xas")) proEngineer.add(tmp);
+			if (is(tmp, "*.prt.*", "*.xpr", "*.asm.*", "*.xas")) proEngineer.add(tmp);
 			if (is(tmp, "*.par", "*.psm")) solidEdge.add(tmp);
 			if (is(tmp,  "*.ckd")) cadKey.add(tmp);
 			if (is(tmp, "*.dll")) add_ins.add(tmp);
