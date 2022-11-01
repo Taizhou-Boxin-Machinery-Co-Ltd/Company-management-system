@@ -1,7 +1,7 @@
 #boxin
 .idea
 .gradle
-Load3D/build
+*/build
 
 # Compiled class file
 *.class
