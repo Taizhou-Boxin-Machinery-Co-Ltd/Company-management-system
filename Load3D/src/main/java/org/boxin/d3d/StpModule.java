@@ -11,13 +11,14 @@ import java.util.List;
 @SuppressWarnings("JavadocDeclaration")
 public class StpModule {
 	private String coding_rules;
-	private final List<String> headerLine = new ArrayList<>();
 	private final List<String> dataLine = new ArrayList<>();
+	private Header header;
 	public StpModule(File loadFile) {
 		if (!loadFile.isDirectory()) {
 			try(BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(loadFile), "GBK"))) {
 				String line;
 				int node = 0;
+				List<String> headerLine = new ArrayList<>();
 				while ((line = br.readLine()) != null) {
 					switch (node) {
 						case 0 -> {
@@ -48,9 +49,7 @@ public class StpModule {
 					}
 
 				}
-				for (var a : headerLine) {
-					System.out.println(a);
-				}
+				header = new Header(headerLine);
 
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -60,6 +59,10 @@ public class StpModule {
 
 	public String getCoding_rules() {
 		return coding_rules;
+	}
+
+	public Header getHeader() {
+		return header;
 	}
 
 	public static class Header {
@@ -162,6 +165,10 @@ public class StpModule {
 
 		public String getAuthorize_to_email() {
 			return authorize_to_email;
+		}
+
+		public String getEXPRESS() {
+			return EXPRESS;
 		}
 	}
 }

@@ -12,6 +12,8 @@ public class Main {
 		FileLoad.find();
 		for (var a : FileLoad.stp) {
 			StpModule stpModule = new StpModule(a);
+			System.out.println(stpModule.getHeader().getStpVersion());
+			System.out.println(stpModule.getHeader().getCreateTime());
 		}
 	}
 
