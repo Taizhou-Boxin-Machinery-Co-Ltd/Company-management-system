@@ -1,8 +1,9 @@
 package org.boxin.d3d;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
+import static org.boxin.basic.StringSec.*;
 
 /**
  * @author baka4n
@@ -11,50 +12,58 @@ import java.util.List;
 @SuppressWarnings("JavadocDeclaration")
 public class StpModule {
 	private String coding_rules;
-	private final List<String> dataLine = new ArrayList<>();
 	private Header header;
+	private Data data;
 	public StpModule(File loadFile) {
 		if (!loadFile.isDirectory()) {
 			try(BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(loadFile), "GB2312"))) {
 				String line;
-				int node = 0;
-				List<String> headerLine = new ArrayList<>();
+				final var ref = new Object() {
+					int node = 0;
+					final List<String> headerLine = new ArrayList<>();
+					final List<String> dataLine = new ArrayList<>();
+				};
+				StringBuilder sb = new StringBuilder();
 				while ((line = br.readLine()) != null) {
-					switch (node) {
+					//整理代码段
+					sb.append(line);
+					//结束整理
+
+				}
+				List<String> code = new ArrayList<>(Arrays.asList(sb.toString().split(";")));
+				code.forEach(read -> {
+					switch (ref.node) {
 						case 0 -> {
-							if (line.contains("HEADER;")) {
-								node = 1;//头部
-							}
-							if (line.contains("DATA;")) {
-								node = 2;//数据区域
-							}
-							if (line.contains("ISO")) {
-								coding_rules = line;
+							if (lower(read).contains("iso")) {
+								coding_rules = read;
+							} else if (lower(read).contains("header")) {
+								ref.node = 1;
+							} else if (lower(read).contains("data")) {
+								ref.node = 2;
 							}
 						}
 						case 1 -> {
-							if (line.contains("ENDSEC;")) {
-								node = 0;
-								continue;
-							}
-							headerLine.add(line);
+							if (lower(read).contains("endsec")) ref.node = 0;
+							else ref.headerLine.add(read);
 						}
 						case 2 -> {
-							if (line.contains("ENDSEC;")) {
-								node = 0;
-								continue;
-							}
-							dataLine.add(line);
+							if (lower(read).contains("endsec")) ref.node = 0;
+							else ref.dataLine.add(read);
 						}
 					}
 
-				}
-				header = new Header(headerLine);
+				});
+				header = new Header(ref.headerLine);
+				data = new Data(ref.dataLine);
 
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public static String lower(String str) {
+		return str.toLowerCase().trim();
 	}
 
 	public String getCoding_rules() {
@@ -76,59 +85,56 @@ public class StpModule {
 		private String originating_system;
 		private String authorize_to_email;
 		private String EXPRESS;
+
 		public Header(List<String> header) {
-			int node = 0;
-			int node1 = 0;
-			for (var h : header) {
-				final String[] split = h.substring(h.indexOf("'") + 1).split("'");
-				switch (node) {
+			var ref = new Object() {
+				int node = 0;
+				int node1 = 0;
+			};
+			header.forEach(line -> {
+				var a = saveILString(line, "(", ")", 1);
+				var split = a.contains(",") ? a.split(",") : new String[] { a };
+				switch (ref.node) {
 					case 0 -> {
-						if (h.contains("FILE_DESCRIPTION")) {
-							stpVersion = h.split("'")[1];
-							node = 1;
-						} else if (h.contains("FILE_NAME")) {
-							default_File_Name = h.split("'")[1];
-							node = 2;
-						} else if (h.contains("FILE_SCHEMA")) {
-							EXPRESS = split[0];
-						}
+							if (lower(line).contains("description")) {
+								stpVersion = saveILString(split[ref.node1], "'", "'", 1);
+								ref.node = 1;
+
+							} else if (lower(line).contains("name")) {
+
+								default_File_Name = saveILString(split[ref.node1], "'", "'", 1);
+
+								ref.node = 2;
+							} else if (lower(line).contains("schema")) {
+								EXPRESS = saveILString(split[ref.node1], "'", "'", 1);
+
+							}
+
 					}
 					case 1 -> {
-						implementation_level = split[0];
-						node = 0;
+
+						implementation_level = saveILString(split[ref.node1 + 1], "'", "'", 1);
+
+						ref.node = 0;
 					}
 					case 2 -> {
-						switch (node1) {
-							case 0 -> {
-								createTime = split[0];
-								node1 = 1;
-							}
-							case 1 -> {
-								email = split[0];
-								node1 = 2;
-							}
-							case 2 -> {
-								company_name = split[0];
-								node1 = 3;
-							}
-							case 3 -> {
-								preprocessor_version = split[0];
-								node1 = 4;
-							}
-							case 4 -> {
-								originating_system = split[0];
-								node1 = 5;
-							}
+						var c = saveILString(split[ref.node1 + 1], "'", "'", 1);
+						switch (ref.node1) {
+							case 0 -> createTime = c;
+							case 1 -> email = c;
+							case 2 -> company_name = c;
+							case 3 -> preprocessor_version = c;
+							case 4 -> originating_system = c;
 							case 5 -> {
-								authorize_to_email = split[0];
-								node1 = 0;
-								node = 0;
+								authorize_to_email = c;
+								ref.node1 = -1;
+								ref.node = 0;
 							}
 						}
+						ref.node1++;
 					}
 				}
-
-			}
+			});
 		}
 
 		public String getStpVersion() {
@@ -173,17 +179,29 @@ public class StpModule {
 	}
 	public static class Data {
 		public Data(List<String> data) {
-			int node = 0;
-			for (var d : data) {
-				switch (node) {
-					case 0 -> {
-						node = 1;
-					}
-					case 1 -> {
+			var ref = new Object() {
+				final Map<Integer, NoteData> codes = new HashMap<>();
+			};
+			data.forEach(line -> {
+				List<String> list = new ArrayList<>();
+				var a = line.split("=");
+				var num = Integer.parseInt(a[0].replace("#", "").trim());
+				var code = save0IString(a[1], "(", 1);
+				var b = saveILString(a[1], "(", ")", 1);
+				var split = b.contains(",") ? b.split(",") : new String[] {b};
+				//var split = saveILString(a[1], "(", ")", 1).split(",");
+				for (var s : split) {
+					list.add(s.contains("'") ? saveILString(s, "'", "'", 1) : s);
 
-					}
+
+					list.add(split[split.length - 1].contains("'") ? saveILString(split[split.length - 1], "'", "'", 1) : split[split.length - 1]);
 				}
-			}
+
+				var date = new NoteData(code, list.toArray(new String[0]));
+				ref.codes.put(num, date);
+			});
+		}
+		private record NoteData(String code, String[] vaules) {
 		}
 	}
 }
