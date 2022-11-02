@@ -15,7 +15,7 @@ public class StpModule {
 	private Header header;
 	public StpModule(File loadFile) {
 		if (!loadFile.isDirectory()) {
-			try(BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(loadFile), "GBK"))) {
+			try(BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(loadFile), "GB2312"))) {
 				String line;
 				int node = 0;
 				List<String> headerLine = new ArrayList<>();
@@ -169,6 +169,21 @@ public class StpModule {
 
 		public String getEXPRESS() {
 			return EXPRESS;
+		}
+	}
+	public static class Data {
+		public Data(List<String> data) {
+			int node = 0;
+			for (var d : data) {
+				switch (node) {
+					case 0 -> {
+						node = 1;
+					}
+					case 1 -> {
+
+					}
+				}
+			}
 		}
 	}
 }
