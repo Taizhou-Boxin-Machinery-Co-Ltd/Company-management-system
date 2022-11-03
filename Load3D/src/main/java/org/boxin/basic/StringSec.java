@@ -50,6 +50,13 @@ public class StringSec {
 		return name.substring(0, name.indexOf(char1) + 1 - i);
 	}
 
+	public static String saveI0String(String name,  String char1, int i) {
+		return name.substring(name.indexOf(char1) + i);
+	}
+	public static String saveI0String(String name,  String char1) {
+		return name.substring(name.indexOf(char1));
+	}
+
 	/**
 	 * 12345678917 保留字段1和7的字符串 saveString（name, "1", "7"）; 17
 	 * @param name string

@@ -79,7 +79,7 @@ public class StpModule {
 	}
 
 	public static class Header {
-		private String stpVersion;
+		private int stpVersion;
 		private String implementation_level;//1 default for 1994, 2 or 3 for 1995
 		private String default_File_Name;
 		private String createTime;
@@ -118,11 +118,16 @@ public class StpModule {
 			authorize_to_email = saveILString(split[6], "'", "'", 1);
 		}
 		public final void invokeDescription(String[] split) {
-			stpVersion = saveILString(split[0], "'", "'", 1);
+			stpVersion = Integer.parseInt(
+					saveI0String(
+							saveILString(split[0], "'", "'", 1),
+							"AP"
+					).replace("AP", "")
+			);
 			implementation_level = saveILString(split[1], "'", "'", 1);
 		}
 
-		public String getStpVersion() {
+		public int getStpVersion() {
 			return stpVersion;
 		}
 
@@ -164,27 +169,22 @@ public class StpModule {
 	}
 	public static class Data {
 		private final Map<Integer, NoteData> codes = new HashMap<>();
+		private final Map<Integer, String> nc = new HashMap<>();
 		public Data(List<String> data) {
-			final var ref = new Object() {
-				final Map<Integer, NoteData> codes = new HashMap<>();
-			};
+
 			data.forEach(line -> {
-				List<String> list = new ArrayList<>();
+
+				//初步获取#行代码
 				var a = line.split("=");
 				var num = Integer.parseInt(a[0].replace("#", "").trim());
-				var code = save0IString(a[1], "(", 1);
-				var b = saveILString(a[1], "(", ")", 1);
-				var split = b.contains(",") ? b.split(",") : new String[] {b};
-				//var split = saveILString(a[1], "(", ")", 1).split(",");
-				for (var s : split) {
-					list.add(s.contains("'") ? saveILString(s, "'", "'", 1) : s);
-					list.add(split[split.length - 1].contains("'") ? saveILString(split[split.length - 1], "'", "'", 1) : split[split.length - 1]);
-				}
-
-				var date = new NoteData(code, list.toArray(new String[0]));
-				ref.codes.put(num, date);
+				var code = a[1];
+				nc.put(num, code);
+				System.out.println( num + ":" + code);
 			});
-			codes.putAll(ref.codes);
+		}
+
+		public record DataRecord(String method, Object... objects) {
+
 		}
 
 		public Map<Integer, NoteData> getCodes() {
