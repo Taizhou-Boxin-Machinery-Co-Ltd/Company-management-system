@@ -192,6 +192,13 @@ public class StpModule {
 		}
 
 		public record NoteData(String code, String[] values) {
+			@Override
+			public String toString() {
+				return code;
+			}
+			public String[] toStrings() {
+				return values;
+			}
 		}
 	}
 }

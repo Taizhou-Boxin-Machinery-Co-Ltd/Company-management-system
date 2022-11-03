@@ -16,7 +16,7 @@ public class Main {
 			StpModule stpModule = new StpModule(a);
 			System.out.println(stpModule.getHeader().getStpVersion());
 			System.out.println(stpModule.getHeader().getCreateTime());
-			NoteData x = stpModule.getData().getCodes().get(1);
+			NoteData x = stpModule.getData().getCodes().get(111);
 			System.out.println(x.code());
 			for (String value : x.values()) {
 				System.out.println(value);
