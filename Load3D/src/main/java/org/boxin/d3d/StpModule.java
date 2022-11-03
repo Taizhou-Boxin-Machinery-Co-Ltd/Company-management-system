@@ -30,7 +30,7 @@ public class StpModule {
 					//结束整理
 
 				}
-				List<String> code = new ArrayList<>(Arrays.asList(sb.toString().split(";")));
+				List<String> code = new ArrayList<>(Arrays.asList(sb.toString().trim().split(";")));
 				code.forEach(read -> {
 					switch (ref.node) {
 						case 0 -> {
@@ -63,7 +63,7 @@ public class StpModule {
 	}
 
 	public static String lower(String str) {
-		return str.toLowerCase().trim();
+		return str.toLowerCase();
 	}
 
 	public String getCoding_rules() {
@@ -89,49 +89,32 @@ public class StpModule {
 		public Header(List<String> header) {
 			var ref = new Object() {
 				int node = 0;
-				int node1 = 0;
 			};
 			header.forEach(line -> {
 				var a = saveILString(line, "(", ")", 1);
-				var split = a.contains(",") ? a.split(",") : new String[] { a };
+				var split = a.split(",");
+				if (lower(line).contains("description")) {
+					ref.node = 1;
+				} else if (lower(line).contains("name")) {
+					ref.node = 2;
+				} else if (lower(line).contains("schema")) {
+					EXPRESS = saveILString(split[0], "'", "'", 1);
+				}
 				switch (ref.node) {
-					case 0 -> {
-							if (lower(line).contains("description")) {
-								stpVersion = saveILString(split[ref.node1], "'", "'", 1);
-								ref.node = 1;
-
-							} else if (lower(line).contains("name")) {
-
-								default_File_Name = saveILString(split[ref.node1], "'", "'", 1);
-
-								ref.node = 2;
-							} else if (lower(line).contains("schema")) {
-								EXPRESS = saveILString(split[ref.node1], "'", "'", 1);
-
-							}
-
-					}
 					case 1 -> {
-
-						implementation_level = saveILString(split[ref.node1 + 1], "'", "'", 1);
-
+						stpVersion = saveILString(split[0], "'", "'", 1);
+						implementation_level = saveILString(split[1], "'", "'", 1);
 						ref.node = 0;
 					}
 					case 2 -> {
-						var c = saveILString(split[ref.node1 + 1], "'", "'", 1);
-						switch (ref.node1) {
-							case 0 -> createTime = c;
-							case 1 -> email = c;
-							case 2 -> company_name = c;
-							case 3 -> preprocessor_version = c;
-							case 4 -> originating_system = c;
-							case 5 -> {
-								authorize_to_email = c;
-								ref.node1 = -1;
-								ref.node = 0;
-							}
-						}
-						ref.node1++;
+						default_File_Name = saveILString(split[0], "'", "'", 1);
+						createTime = saveILString(split[1], "'", "'", 1);
+						email = saveILString(split[2], "'", "'", 1);
+						company_name = saveILString(split[3], "'", "'", 1);
+						preprocessor_version = saveILString(split[4], "'", "'", 1);
+						originating_system = saveILString(split[5], "'", "'", 1);
+						authorize_to_email = saveILString(split[6], "'", "'", 1);
+						ref.node = 0;
 					}
 				}
 			});

@@ -13,6 +13,7 @@ public class Main {
 		for (var a : FileLoad.stp) {
 			StpModule stpModule = new StpModule(a);
 			System.out.println(stpModule.getHeader().getStpVersion());
+			System.out.println(stpModule.getHeader().getCreateTime());
 			//System.out.println(stpModule.getHeader().getStpVersion());
 			//System.out.println(stpModule.getHeader().getCreateTime());
 		}
