@@ -74,6 +74,10 @@ public class StpModule {
 		return header;
 	}
 
+	public Data getData() {
+		return data;
+	}
+
 	public static class Header {
 		private String stpVersion;
 		private String implementation_level;//1 default for 1994, 2 or 3 for 1995
@@ -98,25 +102,24 @@ public class StpModule {
 				var a = saveILString(line, "(", ")", 1);
 				var split = a.split(",");
 				switch (ref.node) {
-					case 1 -> {
-						stpVersion = saveILString(split[0], "'", "'", 1);
-						implementation_level = saveILString(split[1], "'", "'", 1);
-					}
-					case 2 -> {
-						default_File_Name = saveILString(split[0], "'", "'", 1);
-						createTime = saveILString(split[1], "'", "'", 1);
-						email = saveILString(split[2], "'", "'", 1);
-						company_name = saveILString(split[3], "'", "'", 1);
-						preprocessor_version = saveILString(split[4], "'", "'", 1);
-						originating_system = saveILString(split[5], "'", "'", 1);
-						authorize_to_email = saveILString(split[6], "'", "'", 1);
-
-					}
-					case 3 -> {
-						EXPRESS = saveILString(split[0], "'", "'", 1);
-					}
+					case 1 -> invokeDescription(split);
+					case 2 -> invokeName(split);
+					case 3 -> EXPRESS = saveILString(split[0], "'", "'", 1);
 				}
 			});
+		}
+		public final void invokeName(String[] split) {
+			default_File_Name = saveILString(split[0], "'", "'", 1);
+			createTime = saveILString(split[1], "'", "'", 1);
+			email = saveILString(split[2], "'", "'", 1);
+			company_name = saveILString(split[3], "'", "'", 1);
+			preprocessor_version = saveILString(split[4], "'", "'", 1);
+			originating_system = saveILString(split[5], "'", "'", 1);
+			authorize_to_email = saveILString(split[6], "'", "'", 1);
+		}
+		public final void invokeDescription(String[] split) {
+			stpVersion = saveILString(split[0], "'", "'", 1);
+			implementation_level = saveILString(split[1], "'", "'", 1);
 		}
 
 		public String getStpVersion() {
@@ -160,8 +163,9 @@ public class StpModule {
 		}
 	}
 	public static class Data {
+		private final Map<Integer, NoteData> codes = new HashMap<>();
 		public Data(List<String> data) {
-			var ref = new Object() {
+			final var ref = new Object() {
 				final Map<Integer, NoteData> codes = new HashMap<>();
 			};
 			data.forEach(line -> {
@@ -174,16 +178,20 @@ public class StpModule {
 				//var split = saveILString(a[1], "(", ")", 1).split(",");
 				for (var s : split) {
 					list.add(s.contains("'") ? saveILString(s, "'", "'", 1) : s);
-
-
 					list.add(split[split.length - 1].contains("'") ? saveILString(split[split.length - 1], "'", "'", 1) : split[split.length - 1]);
 				}
 
 				var date = new NoteData(code, list.toArray(new String[0]));
 				ref.codes.put(num, date);
 			});
+			codes.putAll(ref.codes);
 		}
-		private record NoteData(String code, String[] vaules) {
+
+		public Map<Integer, NoteData> getCodes() {
+			return codes;
+		}
+
+		public record NoteData(String code, String[] values) {
 		}
 	}
 }
