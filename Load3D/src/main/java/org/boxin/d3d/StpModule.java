@@ -91,20 +91,16 @@ public class StpModule {
 				int node = 0;
 			};
 			header.forEach(line -> {
+				ref.node = lower(line).contains("description")
+						? 1 : lower(line).contains("name")
+						? 2 : lower(line).contains("schema")
+						? 3 : 0;
 				var a = saveILString(line, "(", ")", 1);
 				var split = a.split(",");
-				if (lower(line).contains("description")) {
-					ref.node = 1;
-				} else if (lower(line).contains("name")) {
-					ref.node = 2;
-				} else if (lower(line).contains("schema")) {
-					EXPRESS = saveILString(split[0], "'", "'", 1);
-				}
 				switch (ref.node) {
 					case 1 -> {
 						stpVersion = saveILString(split[0], "'", "'", 1);
 						implementation_level = saveILString(split[1], "'", "'", 1);
-						ref.node = 0;
 					}
 					case 2 -> {
 						default_File_Name = saveILString(split[0], "'", "'", 1);
@@ -114,7 +110,10 @@ public class StpModule {
 						preprocessor_version = saveILString(split[4], "'", "'", 1);
 						originating_system = saveILString(split[5], "'", "'", 1);
 						authorize_to_email = saveILString(split[6], "'", "'", 1);
-						ref.node = 0;
+
+					}
+					case 3 -> {
+						EXPRESS = saveILString(split[0], "'", "'", 1);
 					}
 				}
 			});
