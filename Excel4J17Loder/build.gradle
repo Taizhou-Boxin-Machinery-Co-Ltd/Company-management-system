@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+}
+
+group 'org.boxin'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.apache.poi:poi:5.2.3'
+    implementation 'org.apache.poi:poi-ooxml:5.2.3'
+//    implementation 'mysql:mysql-connector-java:8.0.31'
+//    implementation 'com.alibaba:druid:1.2.15'
+}
