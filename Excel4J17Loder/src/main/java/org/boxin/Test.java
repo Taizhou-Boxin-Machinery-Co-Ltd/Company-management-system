@@ -4,12 +4,13 @@ import java.io.IOException;
 
 public class Test {
     public static void main(String[] args) throws IOException {
-        String name = "E:\\Users\\Administrator\\桌面\\元素属性表.xlsx";
+        String name = "C:\\Users\\Administrator\\desktop\\1.xlsx";
         Load.main(name);
-        Load.fileXssfListMap.forEach((s, stringXSSFSheetMap) -> {
-            stringXSSFSheetMap.forEach((s1, rows) -> {
-                System.out.println(s1);
-            });
-        });
+        Load.records.forEach(System.out::println);
+//        Load.fileXssfListMap.forEach((s, stringXSSFSheetMap) -> {
+//            stringXSSFSheetMap.forEach((s1, rows) -> {
+//                System.out.println(s1);
+//            });
+//        });
     }
 }

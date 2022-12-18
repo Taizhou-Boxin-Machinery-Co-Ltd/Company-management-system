@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'antlr'
 }
 
 group 'org.boxin'
@@ -12,6 +13,7 @@ repositories {
 dependencies {
     implementation 'org.apache.poi:poi:5.2.3'
     implementation 'org.apache.poi:poi-ooxml:5.2.3'
+    antlr('org.antlr:antlr4:4.11.1')
 //    implementation 'mysql:mysql-connector-java:8.0.31'
 //    implementation 'com.alibaba:druid:1.2.15'
 }
