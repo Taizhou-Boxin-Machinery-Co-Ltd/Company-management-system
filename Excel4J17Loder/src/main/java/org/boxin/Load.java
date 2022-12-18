@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Load {
-    private static final Map<String, Map<String, XSSFSheet>> fileXssfListMap = new HashMap<>();
+    public static final Map<String, Map<String, XSSFSheet>> fileXssfListMap = new HashMap<>();
     public static void main(String... args) throws IOException {
         System.out.println("Hello world!");
         for (var fileName : args) {
@@ -27,4 +27,12 @@ public class Load {
             fileXssfListMap.put(fileName, xssfSheets);
         }
     }
+    //横向A-Z竖向1-n
+    public static void AZ_n(String fileName, String sheetName) {
+        XSSFSheet sheet = fileXssfListMap.get(fileName).get(sheetName);
+        for (int i = 0; i < 407;i++) {
+            
+        }
+    }
+
 }
