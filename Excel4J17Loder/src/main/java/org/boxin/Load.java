@@ -3,6 +3,8 @@ package org.boxin;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -32,14 +34,14 @@ public class Load {
 //            final Map<String, XSSFSheet> xssfSheets = new HashMap<>();
             for (int i = 0; i < numberOfSheets; i++) {
                 final String sheetName = workbook.getSheetName(i);
-                final Sheet sheet = workbook.getSheetAt(i);
+                final XSSFSheet sheet = workbook.getSheetAt(i);
                 int rowN = sheet.getLastRowNum();
                 for (int j = 0; j < rowN; j++) {
-                    Row row = sheet.getRow(j);
+                    XSSFRow row = sheet.getRow(j);
                     if (row != null) {
                         int cellN = row.getLastCellNum();
                         for (int k = 0; k < cellN; k++) {
-                            Cell cell = row.getCell(k);
+                            XSSFCell cell = row.getCell(k);
                             if (cell != null) {
                                 String value = String.valueOf(cell.getNumericCellValue());
                                 char name = (char) ('A' + cell.getColumnIndex());

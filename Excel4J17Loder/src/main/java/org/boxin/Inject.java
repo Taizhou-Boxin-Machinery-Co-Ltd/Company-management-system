@@ -14,9 +14,9 @@ import org.boxin.g4.BXEXCELLexer;
 import org.boxin.g4.BXEXCELParser;
 import org.boxin.g4.CelVisitor;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,6 +24,7 @@ import java.util.Map;
  * @since 用于快速导入excel
  */
 public class Inject {
+    public static final List<String> fileNameList = new ArrayList<>();//生成的文件保存数据
     public static void inject(Map<String, Map<String, Map<Integer, Map<String, Serializable>>>> map) {
         map.forEach((fileName, mapMap) -> {
             try (XSSFWorkbook sheets = new XSSFWorkbook()) {
@@ -44,6 +45,7 @@ public class Inject {
                 });
                 try (FileOutputStream out = new FileOutputStream(fileName)) {
                     sheets.write(out);
+                    fileNameList.add(fileName);
                 }
 
             } catch (IOException e) {
@@ -64,6 +66,42 @@ public class Inject {
         CelVisitor celVisitor = new CelVisitor();
         celVisitor.visitAll(all);
         inject(celVisitor.fileSheetXAValueMap);
+    }
+
+    public static void save() {
+        StringBuilder a = new StringBuilder();
+        final File file = new File(System.getProperty("user.dir"));
+        final File path = new File(file, "configs.cfg");
+        if (!file.exists()) file.mkdirs();
+        if (!path.exists()) try {
+            file.createNewFile();
+        } catch (IOException e) {}
+        try(BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "\\configs.cfg"))) {
+            String line;
+            while ((line = br.readLine()) != null) a.append(line).append("\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(System.getProperty("user.dir") + "\\configs.cfg"))) {
+            bw.write(a.toString());
+            bw.newLine();
+            fileNameList.forEach(fileName -> {
+                try {
+                    bw.write(fileName);
+                    bw.newLine();
+                } catch (IOException e) {}
+            });
+        } catch (IOException e) {}
+    }
+    public static void load() {
+        try(BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "\\configs.cfg"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                fileNameList.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
