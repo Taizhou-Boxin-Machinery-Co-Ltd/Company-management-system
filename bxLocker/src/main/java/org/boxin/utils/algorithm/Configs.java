@@ -18,9 +18,9 @@ public class Configs {
 
         if (!file1.exists()) {
             try(BufferedWriter br = new BufferedWriter(new FileWriter(file1))) {
-                br.write("<< 199999;");
+                br.write("<< 2147483647;");
                 br.newLine();
-                br.write("+ 1923222;");
+                br.write("+ 2147483647;");
                 br.newLine();
 
             } catch (IOException e) {
