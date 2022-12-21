@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //自制移位
+@SuppressWarnings("UnusedReturnValue")
 public class Move {
     private final List<String> s = new ArrayList<>();
     private List<String> temp;
@@ -70,7 +71,6 @@ public class Move {
         }
         return this;
     }
-
     public Move reduce(int n) {
         temp = new ArrayList<>(s);
         s.clear();
