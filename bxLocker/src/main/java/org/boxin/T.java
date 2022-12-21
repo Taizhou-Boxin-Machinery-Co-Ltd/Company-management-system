@@ -15,17 +15,17 @@ public class T {
 //        System.out.println(hash);
         Hash hash = new Hash(a);
         Move m = new Move(a.getBytes(StandardCharsets.UTF_8), 3);
+        int n = 1000000000;
         final List<String> s = new ArrayList<>(m.getS());
-        m.lg();
+        m.lg().lg().ad(n);
         final List<String> s1 = new ArrayList<>(m.getS());
-        m.rg();
+        m.del(n).rg().rg();
         final List<String> s2 = new ArrayList<>(m.getS());
         for (int i = 0; i < s1.size(); i++) {
-            System.out.println(s.get(i) + ":" + s1.get(i) + ":" + s2.get(i));
+            System.out.println(s.get(i) + "    " + s1.get(i) + "    " + s2.get(i));
         }
 
         System.out.println(hash.getSHA1());
-
         System.out.println(hash.getSHA224());
         System.out.println(hash.getSHA256());
         System.out.println(hash.getSHA384());

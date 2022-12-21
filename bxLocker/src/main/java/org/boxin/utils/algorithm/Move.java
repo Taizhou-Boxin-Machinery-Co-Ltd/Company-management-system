@@ -47,5 +47,33 @@ public class Move {
         }
         return this;
     }
+    //位码+1
+    public Move ad(int n) {
+        List<String> sa = new ArrayList<>(s);
+        s.clear();
+        for (var b : sa) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < b.length(); i++) {
+                char c = (char) (b.charAt(i) + n);
+                sb.append(c);
+            }
+            s.add(sb.toString());
+        }
+        return this;
+    }
+
+    public Move del(int n) {
+        List<String> sa = new ArrayList<>(s);
+        s.clear();
+        for (var b : sa) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < b.length(); i++) {
+                char c = (char) (b.charAt(i) - n);
+                sb.append(c);
+            }
+            s.add(sb.toString());
+        }
+        return this;
+    }
 
 }
