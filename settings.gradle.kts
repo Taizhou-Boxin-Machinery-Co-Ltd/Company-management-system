@@ -8,3 +8,4 @@ pluginManagement {
 }
 rootProject.name = "Company-management-system"
 include("Server")
+include("Server")
