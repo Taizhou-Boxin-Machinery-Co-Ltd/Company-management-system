@@ -1,0 +1,5 @@
+{
+  "readme": "秘钥系数为sha512",
+  "port": 25599,
+  "secret_key_coefficient": "dd4d2a94c18a4e94877f6de95c9de9c28fe528706d701d9cf124a14fadb9129f8af4a0149c21d0963e4237bc34371b834779989520a2cf256bd39f418564d651"
+}

@@ -43,6 +43,7 @@ shadow {
     }
 }
 
+
 build.dependsOn shadowJar
 
 //jar {
