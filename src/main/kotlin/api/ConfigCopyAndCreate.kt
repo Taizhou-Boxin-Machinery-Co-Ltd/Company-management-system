@@ -6,7 +6,7 @@ object ConfigCopyAndCreate {
 
    @Throws(IOException::class)
    fun copy() {
-      val file = File(System.getProperty("user.dir"), ".server/config.json")
+      val file = File(System.getProperty("user.dir"), ".client/config.json")
       if (!file.parentFile.exists()) {
          file.parentFile.mkdirs()
       }
