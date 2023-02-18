@@ -1,12 +1,13 @@
 package api
 
 import io.netty.bootstrap.Bootstrap
-import io.netty.channel.Channel
-import io.netty.channel.ChannelInitializer
-import io.netty.channel.ChannelOption
+import io.netty.channel.*
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioSocketChannel
+import io.netty.handler.codec.LineBasedFrameDecoder
+import io.netty.handler.codec.string.StringDecoder
+import io.netty.handler.codec.string.StringEncoder
 import ltd.boxin.api.NettyClientHandler
 
 
@@ -23,8 +24,11 @@ class Client: Runnable {
             .handler(object : ChannelInitializer<SocketChannel>() {
                 @Throws(Exception::class)
                 override fun initChannel(socketChannel: SocketChannel) {
-                    val nettyClientHandler = NettyClientHandler()
-                    socketChannel.pipeline().addLast(nettyClientHandler) //加入自定义处理器
+//                    val nettyClientHandler = NettyClientHandler()
+                    socketChannel.pipeline().addLast(LineBasedFrameDecoder(1024))
+                    socketChannel.pipeline().addLast(StringDecoder())
+                    socketChannel.pipeline().addLast(StringEncoder())
+//                    socketChannel.pipeline().addLast(nettyClientHandler) //加入自定义处理器
                 }
             })
         println("客户端已准备就绪")
@@ -43,5 +47,4 @@ class Client: Runnable {
 
         channel.writeAndFlush(msg)
     }
-
 }

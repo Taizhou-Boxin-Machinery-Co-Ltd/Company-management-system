@@ -7,6 +7,9 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LineBasedFrameDecoder;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
 import ltd.boxin.api.NettyServerHandler;
 import ltd.boxin.config.ConfigCopyAndCreate;
 
@@ -36,6 +39,8 @@ public class Main {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             NettyServerHandler nettyServerHandler = new NettyServerHandler();
+                            socketChannel.pipeline().addLast(new StringEncoder());
+                            socketChannel.pipeline().addLast(new StringDecoder());
                             socketChannel.pipeline().addLast(nettyServerHandler); //自定义handler
                         }
                     });//workerGroup的EventLoop对应的管道设置处理器
