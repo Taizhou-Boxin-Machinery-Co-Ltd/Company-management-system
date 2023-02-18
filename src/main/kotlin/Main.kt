@@ -5,7 +5,11 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.window.application
+import api.Client
+import api.ConfigCopyAndCreate
 import api.WindowHandle
+
+val client = Client()
 
 @Composable
 @Preview
@@ -15,6 +19,7 @@ fun App(windowHandle: WindowHandle) {
     MaterialTheme {
         Button(onClick = {
             text = "Hello, Desktop!"
+            client.sendMsg("caonima")
         }) {
             Text(text)
         }
@@ -22,7 +27,11 @@ fun App(windowHandle: WindowHandle) {
 }
 
 fun main() {
+    ConfigCopyAndCreate.init()
 
+    val thread = Thread(client)
+    thread.start()
+//    Client.test()
     application {
         val win_title: MutableState<String> = remember { mutableStateOf("default") }
         val boolean: MutableState<Boolean> = remember { mutableStateOf(true) }

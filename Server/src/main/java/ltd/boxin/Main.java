@@ -1,13 +1,17 @@
 package ltd.boxin;
 
-import com.google.gson.Gson;
-import ltd.boxin.api.ServerThread;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import ltd.boxin.api.NettyServerHandler;
 import ltd.boxin.config.ConfigCopyAndCreate;
 
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Date;
 
 public class Main {
     public static ServerSocket server = null;
@@ -15,20 +19,38 @@ public class Main {
     public static Thread receiveThread = null;
     public static void main(String[] args) {
         ConfigCopyAndCreate.init();
-        try {
-            server = new ServerSocket(ConfigCopyAndCreate.port);
-            System.out.println("Welcome to the server!");
-            System.out.println(new Date());
-            System.out.println("The server is ready!");
-            System.out.println("Port: " + ConfigCopyAndCreate.port);
-            while (true) { //等待用户请求
-                request = server.accept();//接收客户机连接请求
-                receiveThread = new ServerThread(request);//生成serverThread的实例
-                receiveThread.start();//启动serverThread线程
-            }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
+        //创建bossGroup , 只负责连接请求
+        NioEventLoopGroup bossGroup = new NioEventLoopGroup();
+        //创建workerGroup , 负责客户端业务处理
+        NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+        //创建服务端启动对象,配置参数.
+        ServerBootstrap serverBootstrap = new ServerBootstrap();
 
+        try {
+            serverBootstrap.group(bossGroup, workerGroup)//设置线程组
+                    .channel(NioServerSocketChannel.class)//使用NioSocketChannel作为服务端的通道实现
+                    .option(ChannelOption.SO_BACKLOG, 128)//设置线程队列得到连接个数
+                    .childOption(ChannelOption.SO_KEEPALIVE, true)//设置保持活动连接状态
+                    .childHandler(new ChannelInitializer<SocketChannel>() {//创建一个通道测试对象
+                        //给pipeline设置处理器
+                        @Override
+                        protected void initChannel(SocketChannel socketChannel) throws Exception {
+                            NettyServerHandler nettyServerHandler = new NettyServerHandler();
+                            socketChannel.pipeline().addLast(nettyServerHandler); //自定义handler
+                        }
+                    });//workerGroup的EventLoop对应的管道设置处理器
+
+            System.out.println("服务端准备就绪...");
+
+            //绑定一个端口并且同步,生成了一个channelFuture对象
+            ChannelFuture cf = serverBootstrap.bind(ConfigCopyAndCreate.port).sync();
+            //对关闭通道进行监听
+            cf.channel().closeFuture().sync();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            workerGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
+        }
     }
 }
