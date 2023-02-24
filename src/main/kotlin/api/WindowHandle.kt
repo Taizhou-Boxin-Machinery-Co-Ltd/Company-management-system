@@ -10,7 +10,6 @@ import java.net.Socket
 
 
 class WindowHandle(val win_title: MutableState<String>, val boolean:  MutableState<Boolean>) {
-    val socket = Socket("127.0.0.1", 25599)
     @Composable
     fun build(content: @Composable FrameWindowScope.() -> Unit) {
         if (boolean.value) {

@@ -1,8 +1,13 @@
 package api
 
+import com.google.gson.Gson
+import com.google.gson.internal.LinkedTreeMap
 import java.io.*
 
 object ConfigCopyAndCreate {
+   val gson = Gson()
+   var port = 25599
+   var host = "127.0.0.1"
 
    @Throws(IOException::class)
    fun copy() {
@@ -34,5 +39,16 @@ object ConfigCopyAndCreate {
       } catch (e: IOException) {
          println(e.message)
       }
+      var linkedTreeMap = gson.fromJson(InputStreamReader(javaClass.getResourceAsStream("/config.json")!!), LinkedTreeMap::class.java)
+      val get = linkedTreeMap.get("port")
+      if (get is Double) {
+         port = get.toInt()
+      }
+      val host = linkedTreeMap.get("ip")
+      if (host is String?) {
+         this.host = host!!
+      }
+
+
    }
 }

@@ -13,6 +13,7 @@ import java.util.Objects;
 public class ConfigCopyAndCreate {
     public static final Gson gson = new Gson();
     public static int port = 25598;
+    public static String host = "127.0.0.1";
 
     public static void copy() throws IOException {
         File file = new File(System.getProperty("user.dir"), ".server/config.json");
