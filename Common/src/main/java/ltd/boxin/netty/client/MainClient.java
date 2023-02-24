@@ -18,6 +18,7 @@ public class MainClient {
     private final int port;
     private Channel channel;
     private Bootstrap b = null;
+    public MainClientHandler handler = null;
     public MainClient(String host, int port) {
         this.host = host;
         this.port = port;
@@ -41,7 +42,8 @@ public class MainClient {
                         //心跳检测
                         pipeline.addLast(new IdleStateHandler(0, 4, 0, TimeUnit.SECONDS));
                         //客户端的逻辑
-                        pipeline.addLast("handler", new MainClientHandler(MainClient.this));
+                        handler = new MainClientHandler(MainClient.this);
+                        pipeline.addLast("handler", handler);
 
                     }
                 });

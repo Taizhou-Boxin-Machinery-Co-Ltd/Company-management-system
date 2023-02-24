@@ -7,9 +7,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.window.application
 import api.ConfigCopyAndCreate
 import api.WindowHandle
+import ltd.boxin.mina.client.Client
 import ltd.boxin.netty.client.MainClient
 
-var mainClient: MainClient? = null
+//var mainClient: MainClient? = null
+var client:Client? = null
 @Composable
 @Preview
 fun App(windowHandle: WindowHandle) {
@@ -18,7 +20,8 @@ fun App(windowHandle: WindowHandle) {
     MaterialTheme {
         Button(onClick = {
             text = "Hello, Desktop!"
-            mainClient!!.sendMessage("aab")
+            client!!.sendMessage("abb")
+//            mainClient!!.channel.writeAndFlush("abb")
         }) {
             Text(text)
         }
@@ -27,8 +30,10 @@ fun App(windowHandle: WindowHandle) {
 
 fun main() {
     ConfigCopyAndCreate.init()
-    mainClient = MainClient(ConfigCopyAndCreate.host, ConfigCopyAndCreate.port)
-    mainClient!!.start()
+    client = Client(ConfigCopyAndCreate.host, ConfigCopyAndCreate.port)
+    client!!.main()
+//    mainClient = MainClient(ConfigCopyAndCreate.host, ConfigCopyAndCreate.port)
+//    mainClient!!.start()
 //    Client.test()
     application {
         val win_title: MutableState<String> = remember { mutableStateOf("default") }

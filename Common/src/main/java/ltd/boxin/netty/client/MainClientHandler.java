@@ -1,5 +1,6 @@
 package ltd.boxin.netty.client;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoop;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -11,12 +12,14 @@ import java.util.concurrent.TimeUnit;
 public class MainClientHandler extends SimpleChannelInboundHandler {
     private MainClient client;
     private String tenantId;
+    private Channel channel;
     private int attempts = 0;
     public MainClientHandler(MainClient client) {
         this.client = client;
     }
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, Object msg) {
+        channel = ctx.channel();
         System.out.println("service send message" + msg.toString());
     }
 
@@ -41,6 +44,10 @@ public class MainClientHandler extends SimpleChannelInboundHandler {
         ctx.fireChannelInactive();
     }
 
+    public void sendMsg(String msg) {
+        channel.writeAndFlush(msg);
+    }
+
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent event) {
@@ -48,12 +55,13 @@ public class MainClientHandler extends SimpleChannelInboundHandler {
                 System.out.println("Reader_idle");
             } else if (event.state().equals(IdleState.WRITER_IDLE)) {
                 //发送心跳，保持长连接
-                String s = "NettyClient"+System.getProperty("line.separator");
+                String s = System.getProperty("line.separator")+"boxin"+System.getProperty("line.separator");
                 ctx.channel().writeAndFlush(s);  //发送心跳成功
             } else if (event.state().equals(IdleState.ALL_IDLE)) {
                 System.out.println("All_idel");
             }
             super.userEventTriggered(ctx, evt);
         }
+
     }
 }
