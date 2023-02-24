@@ -20,7 +20,7 @@ fun App(windowHandle: WindowHandle) {
     MaterialTheme {
         Button(onClick = {
             text = "Hello, Desktop!"
-            client!!.sendMessage("abb")
+            client!!.sendMessage("/login admin admin")
 //            mainClient!!.channel.writeAndFlush("abb")
         }) {
             Text(text)
