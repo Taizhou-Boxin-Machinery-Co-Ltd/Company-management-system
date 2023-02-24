@@ -71,8 +71,4 @@ public class MainClient {
     public void sendMessage(String msg) {
         channel.writeAndFlush(msg);
     }
-
-    public void main() {
-        start();
-    }
 }

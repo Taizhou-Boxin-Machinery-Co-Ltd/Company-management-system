@@ -16,18 +16,18 @@ public class MainClientHandler extends SimpleChannelInboundHandler {
         this.client = client;
     }
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, Object msg) throws Exception {
+    protected void messageReceived(ChannelHandlerContext ctx, Object msg) {
         System.out.println("service send message" + msg.toString());
     }
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    public void channelActive(ChannelHandlerContext ctx) {
         System.out.println("output connected!");
         attempts = 0;
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(ChannelHandlerContext ctx) {
         System.out.println("offline");
         //断线重连机制
         final EventLoop eventLoop = ctx.channel().eventLoop();
@@ -35,9 +35,7 @@ public class MainClientHandler extends SimpleChannelInboundHandler {
             attempts++;
         }
         int timeout = 2<<attempts;
-        eventLoop.schedule(() -> {
-            client.start();
-        }, timeout, TimeUnit.SECONDS);
+        eventLoop.schedule(() -> client.start(), timeout, TimeUnit.SECONDS);
         ctx.fireChannelInactive();
     }
 
@@ -48,7 +46,7 @@ public class MainClientHandler extends SimpleChannelInboundHandler {
                 System.out.println("Reader_idle");
             } else if (event.state().equals(IdleState.WRITER_IDLE)) {
                 //发送心跳，保持长连接
-                String s = "NettyClient"+System.getProperty("line.separator");
+                String s = System.getProperty("line.separator");
                 ctx.channel().writeAndFlush(s);  //发送心跳成功
             } else if (event.state().equals(IdleState.ALL_IDLE)) {
                 System.out.println("All_idel");

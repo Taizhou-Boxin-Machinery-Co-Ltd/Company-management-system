@@ -13,7 +13,7 @@ public class MainServerHandler extends SimpleChannelInboundHandler {
         this.server = server;
     }
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, Object msg) throws Exception {
+    protected void messageReceived(ChannelHandlerContext ctx, Object msg) {
         System.out.println(msg.toString());
         //重置心跳
         counter = 0;
